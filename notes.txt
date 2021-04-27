@@ -26,8 +26,5 @@
 [ ] test guard
 
 
-jwt authentication:
-- different secrets for access token and refresh token
-- access token exp time 10 minutes
-- refresh token exp time 3 months
-- place tokens in header as in the https://wanago.io/2020/09/21/api-nestjs-refresh-tokens-jwt/
+
+VALIDATION
