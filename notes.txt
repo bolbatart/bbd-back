@@ -1,0 +1,33 @@
+
+
+[ ] connect mongodb
+[ ] crud authentication
+    - crud
+        - register
+            - crete user
+            - hash password
+            - create jwt tokens and add to the httpOnly cookie
+            - save to db and send response
+        - login
+            - find user by email
+            - compore hased passwords
+            - create jwt tokens and add to the cookies
+        - logout
+            - clear cookies where jwt tokens is stored
+        - forgot passwords
+        - nuzno li delatj reset jwt? 
+
+    - tokens
+    - refresh-password
+        - send email
+        - refresh tokens
+[ ] guard
+[ ] crud projects
+[ ] test guard
+
+
+jwt authentication:
+- different secrets for access token and refresh token
+- access token exp time 10 minutes
+- refresh token exp time 3 months
+- place tokens in header as in the https://wanago.io/2020/09/21/api-nestjs-refresh-tokens-jwt/
