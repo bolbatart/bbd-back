@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, Get, Req, Param, Put } from '@nestjs/common';
+import { Controller, Post, Body, Res, Get, Req, Param, Put, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 
@@ -7,6 +7,7 @@ import { RegistreDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgotPassword.dto';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -57,6 +58,13 @@ export class AuthController {
     @Body() resetPasswordDto: ResetPasswordDto
   ) {
     return this.authService.resetPassword(resetPasswordDto, key);
+  }
+
+  // secret endpoint
+  @UseGuards(JwtAuthGuard)
+  @Get('secret')
+  secretRoute() {
+    return { message: 'proshel cerez guard' }
   }
 }
 

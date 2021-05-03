@@ -23,7 +23,6 @@ export class AuthService {
   constructor(
       @InjectModel(User.name) private userModel: Model<UserDocument>, 
       private jwtService: JwtService,
-      // private readonly sendGrid: SendGridService
     ) {}
 
   // REGISTER
@@ -54,7 +53,7 @@ export class AuthService {
     if (!dbUser || !await bcrypt.compare(loginDto.password, dbUser.password)) throw new BadRequestException;
     
     try {
-      const { password, ...user } = dbUser.toObject();
+      const { password, resetToken, ...user } = dbUser.toObject();
       const { accessToken, refreshToken } = this.generateCookies({ id: user._id })
       this.asignCookies(res, accessToken, refreshToken)
       return user;
@@ -130,11 +129,11 @@ export class AuthService {
 
   // HELPERS
   createAccessToken(payload: IJwtPayload) {
-    return this.jwtService.sign(payload, {expiresIn: process.env.JWT_ACCESS_EXPIRES});
+    return this.jwtService.sign(payload, { expiresIn: process.env.JWT_ACCESS_EXPIRES, secret: process.env.JWT_SECRET });
   }
 
   createRefreshToken(payload: IJwtPayload) {
-    return this.jwtService.sign(payload, {expiresIn: process.env.JWT_REFRESH_EXPIRES});
+    return this.jwtService.sign(payload, { expiresIn: process.env.JWT_REFRESH_EXPIRES, secret: process.env.JWT_SECRET });
   }
 
   generateCookies(payload: IJwtPayload) {

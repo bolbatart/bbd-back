@@ -2,7 +2,7 @@ https://wanago.io/2020/05/25/api-nestjs-authenticating-users-bcrypt-passport-jwt
 
 
 TODO:
-[ ] refresh password
+[x] refresh password
 https://www.youtube.com/watch?v=-rcRf7yswfM - poprobovatj etot, esli ne polucitsa togda sdelatj prosto s gmail i less secure, cto by hotj kakto rabotalo
 
 [ ] /refresh-token: esli usera netu v bd, to vernutj unauthorized
