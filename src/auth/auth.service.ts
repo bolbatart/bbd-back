@@ -3,20 +3,27 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { v4 as uuidv4 } from 'uuid';
+import { google } from 'googleapis';
+import * as nodemailer from 'nodemailer';
+import { Request, Response } from 'express';
 
 import { User, UserDocument } from 'users/schemas/user.schema';
 import { RegistreDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { IJwtPayload } from './models/jwt-payload.interface';
-import { Request, Response } from 'express';
-import { IJWTCookies } from './models/jwt-cookies.interface';
+import { addMintutesToTime } from 'helper';
+import { ForgotPasswordDto } from './dto/forgotPassword.dto';
+import { ResetPasswordDto } from './dto/resetPassword.dto';
+
 
 
 @Injectable()
 export class AuthService {
   constructor(
       @InjectModel(User.name) private userModel: Model<UserDocument>, 
-      private jwtService: JwtService
+      private jwtService: JwtService,
+      // private readonly sendGrid: SendGridService
     ) {}
 
   // REGISTER
@@ -56,7 +63,7 @@ export class AuthService {
     }
   }
 
-  // REFRESH
+  // REFRESH-TOKEN
   async refresh(req: Request, res: Response) {
     // if no refresh token then redirect to login page
     if (
@@ -76,10 +83,6 @@ export class AuthService {
     } catch (error) {
       throw new InternalServerErrorException;
     }
-    
-
-    
-    // return res.send.status(200).message('Ok');
   }
   
   // LOGOUT
@@ -90,6 +93,38 @@ export class AuthService {
       return res.sendStatus(200);
     } catch (error) {
       throw new InternalServerErrorException;
+    }
+  }
+
+  // FORGOT-PASSWORD
+  async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
+    const user = await this.userModel.findOne({ email: forgotPasswordDto.email });
+    if (!user) throw new BadRequestException;
+    try {
+      const token = uuidv4();
+      const expiresIn = addMintutesToTime(new Date(), 15);
+      user.resetToken = { token, expiresIn };
+      await user.save();
+      await this.sendLinkToEmail(token, user.email)
+      return true;
+    } catch (error) {
+      throw new InternalServerErrorException;
+    }
+  }
+
+  // RESET-PASSWORD
+  async resetPassword(resetPasswordDto: ResetPasswordDto, key: string) {
+    const dbUser = await this.userModel.findOne({ email: resetPasswordDto.email });
+    if (!dbUser || new Date(dbUser.resetToken.expiresIn) < new Date()) throw new BadRequestException;
+    
+    try {
+      dbUser.password = await bcrypt.hash(resetPasswordDto.password, 10);
+      await dbUser.save();
+
+      return true;
+    } catch (error) {
+      throw new InternalServerErrorException;
+      
     }
   }
 
@@ -112,5 +147,45 @@ export class AuthService {
   asignCookies(res: Response, accessToken: string, refreshToken: string) {
     res.cookie(process.env.JWT_ACCESS_NAME, accessToken, { httpOnly: true, maxAge: Number(process.env.JWT_ACCESS_EXPIRES), secure: true }),
     res.cookie(process.env.JWT_REFRESH_NAME, refreshToken, { httpOnly: true, maxAge: Number(process.env.JWT_REFRESH_EXPIRES), secure: true })
+  }
+
+  async sendLinkToEmail(key: string, email: string) {
+
+    const oAuth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URI);
+    oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
+
+    async function sendMail() {
+      try {
+        const accessToken = await oAuth2Client.getAccessToken();
+
+        const transport = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            type: 'oAuth2',
+            user: 'artiombolbat123@gmail.com',
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            refreshToken: process.env.REFRESH_TOKEN,
+            accessToken: accessToken
+          }
+        })
+
+        const mailOptions = {
+          from: 'BBD Project <artiombolbat123@gmail.com>',
+          to: 'bolbatartiom@gmail.com',
+          subject: 'Hello from gmail using API',
+          text: 'Hello from gmail using API',
+          html: `<a href='http://localhost:3000/reset/${key}'>Click here</a>`
+        }
+
+        const result = await transport.sendMail(mailOptions);
+        return result;
+
+      } catch (error) {
+        return error;
+      }
+    }
+
+    return sendMail();
   }
 }

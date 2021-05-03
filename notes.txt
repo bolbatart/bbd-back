@@ -1,30 +1,11 @@
+https://wanago.io/2020/05/25/api-nestjs-authenticating-users-bcrypt-passport-jwt-cookies/
 
 
-[ ] connect mongodb
-[ ] crud authentication
-    - crud
-        - register
-            - crete user
-            - hash password
-            - create jwt tokens and add to the httpOnly cookie
-            - save to db and send response
-        - login
-            - find user by email
-            - compore hased passwords
-            - create jwt tokens and add to the cookies
-        - logout
-            - clear cookies where jwt tokens is stored
-        - forgot passwords
-        - nuzno li delatj reset jwt? 
+TODO:
+[ ] refresh password
+https://www.youtube.com/watch?v=-rcRf7yswfM - poprobovatj etot, esli ne polucitsa togda sdelatj prosto s gmail i less secure, cto by hotj kakto rabotalo
 
-    - tokens
-    - refresh-password
-        - send email
-        - refresh tokens
-[ ] guard
-[ ] crud projects
-[ ] test guard
+[ ] /refresh-token: esli usera netu v bd, to vernutj unauthorized
 
+[ ] postavitj guardy kotorye budut proveriatj imeet li user dostup k dannomu endpointu 
 
-
-VALIDATION

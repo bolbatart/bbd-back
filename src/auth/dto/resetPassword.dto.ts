@@ -1,9 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { LoginDto } from './login.dto';
 import { IsNotEmpty, IsEmail, IsString, MinLength, MaxLength, Matches } from 'class-validator';
 import { Match } from 'common/decorators/password-match.decorator';
 
-export class RegistreDto {
+export class ResetPasswordDto {
     @ApiProperty()
     @IsString()
     @IsEmail()
@@ -24,12 +23,4 @@ export class RegistreDto {
     @MaxLength(20)
     @Match('password')
     readonly passwordConfirm: string;
-
-    @ApiProperty()
-    @IsNotEmpty()
-    readonly firstName: string;
-
-    @ApiProperty()
-    @IsNotEmpty()
-    readonly lastName: string;
 }
