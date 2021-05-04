@@ -5,7 +5,16 @@ TODO:
 [x] refresh password
 https://www.youtube.com/watch?v=-rcRf7yswfM - poprobovatj etot, esli ne polucitsa togda sdelatj prosto s gmail i less secure, cto by hotj kakto rabotalo
 
+[x] postavitj guardy kotorye budut proveriatj imeet li user dostup k dannomu endpointu 
+
 [ ] /refresh-token: esli usera netu v bd, to vernutj unauthorized
 
-[ ] postavitj guardy kotorye budut proveriatj imeet li user dostup k dannomu endpointu 
+
+PLAN:
+sorting
+filtering
+pagination
+
+payment
+
 

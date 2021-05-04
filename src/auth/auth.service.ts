@@ -15,6 +15,7 @@ import { IJwtPayload } from './models/jwt-payload.interface';
 import { addMintutesToTime } from 'helper';
 import { ForgotPasswordDto } from './dto/forgotPassword.dto';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
+import { UsersService } from 'users/users.service';
 
 
 
@@ -23,6 +24,7 @@ export class AuthService {
   constructor(
       @InjectModel(User.name) private userModel: Model<UserDocument>, 
       private jwtService: JwtService,
+      private userService: UsersService
     ) {}
 
   // REGISTER
@@ -64,10 +66,14 @@ export class AuthService {
 
   // REFRESH-TOKEN
   async refresh(req: Request, res: Response) {
-    // if no refresh token then redirect to login page
+    // todo
+    // if nor user in the database then throw unauth. exception
+    const token = req.cookies[process.env.JWT_REFRESH_NAME];
+    const userId = this.jwtService.decode(req.cookies[process.env.JWT_REFRESH_NAME])['id'];
     if (
-        !req.cookies[process.env.JWT_REFRESH_NAME] ||
-        !this.jwtService.decode(req.cookies[process.env.JWT_REFRESH_NAME])['id']
+        !token ||
+        !userId ||
+        !await this.userService.findById(userId) 
       ) throw new UnauthorizedException
     
     try {
