@@ -31,7 +31,7 @@ export class User {
   location?: string;
 
   @Prop()
-  website?: string;
+  website?: string[];
 
   @Prop()
   bio?: string;

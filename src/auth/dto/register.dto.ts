@@ -16,6 +16,7 @@ export class RegistreDto {
     @MinLength(4)
     @MaxLength(20)
     @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/)
+    @Match('passwordConfirm')
     readonly password: string;
 
     @ApiProperty()

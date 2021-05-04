@@ -66,21 +66,15 @@ export class AuthService {
 
   // REFRESH-TOKEN
   async refresh(req: Request, res: Response) {
-    // todo
-    // if nor user in the database then throw unauth. exception
-    const token = req.cookies[process.env.JWT_REFRESH_NAME];
+    const refreshToken = req.cookies[process.env.JWT_REFRESH_NAME];
     const userId = this.jwtService.decode(req.cookies[process.env.JWT_REFRESH_NAME])['id'];
     if (
-        !token ||
+        !refreshToken ||
         !userId ||
         !await this.userService.findById(userId) 
       ) throw new UnauthorizedException
     
     try {
-      const refreshToken = req.cookies[process.env.JWT_REFRESH_NAME];
-      const decodedToken = this.jwtService.decode(refreshToken);
-
-      const userId = decodedToken['id'];
       const accessToken = this.createAccessToken({ id: userId });
       
       this.asignCookies(res, accessToken, refreshToken);
