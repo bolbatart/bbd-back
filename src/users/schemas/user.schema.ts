@@ -19,6 +19,9 @@ const ResetPaswordTokenSchema = SchemaFactory.createForClass(ResetPaswordToken);
 @Schema()
 export class User {
   @Prop()
+  avatar?: string;
+
+  @Prop()
   firstName: string;
 
   @Prop()
@@ -47,7 +50,6 @@ export class User {
     token: string;
     expiresIn: Date;
   }
-
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

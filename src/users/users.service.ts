@@ -45,6 +45,18 @@ export class UsersService {
     
   }
 
+  async updateAvatar(req: Request, file: Express.Multer.File) {
+    const token = req.cookies[process.env.JWT_ACCESS_NAME];
+    const userId = this.jwtService.decode(token)['id'];
+
+    try {
+      await this.userModel.findByIdAndUpdate(userId, { avatar: file.filename }, { useFindAndModify: true });
+      return true;
+    } catch (error) {
+      throw new InternalServerErrorException;
+    }
+  }
+
   async remove(id: string): Promise<User> {
     return this.userModel.findByIdAndRemove(id);
   }
