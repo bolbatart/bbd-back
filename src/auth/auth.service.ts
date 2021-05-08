@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -23,8 +23,9 @@ import { UsersService } from 'users/users.service';
 export class AuthService {
   constructor(
       @InjectModel(User.name) private userModel: Model<UserDocument>, 
+      @Inject(forwardRef(() => UsersService))
+      private userService: UsersService,
       private jwtService: JwtService,
-      private userService: UsersService
     ) {}
 
   // REGISTER
@@ -68,8 +69,9 @@ export class AuthService {
   async refresh(req: Request, res: Response) {
     const refreshToken = req.cookies[process.env.JWT_REFRESH_NAME];
     const userId = this.jwtService.decode(req.cookies[process.env.JWT_REFRESH_NAME])['id'];
+
     if (
-        !refreshToken ||
+        // !refreshToken ||
         !userId ||
         !await this.userService.findById(userId) 
       ) throw new UnauthorizedException
@@ -146,6 +148,24 @@ export class AuthService {
   asignCookies(res: Response, accessToken: string, refreshToken: string) {
     res.cookie(process.env.JWT_ACCESS_NAME, accessToken, { httpOnly: true, maxAge: Number(process.env.JWT_ACCESS_EXPIRES), secure: true }),
     res.cookie(process.env.JWT_REFRESH_NAME, refreshToken, { httpOnly: true, maxAge: Number(process.env.JWT_REFRESH_EXPIRES), secure: true })
+  }
+
+  getIdFromRefreshToken(req: Request) {
+    try {
+        const userId = this.jwtService.decode(req.cookies[process.env.JWT_REFRESH_NAME])['id'];
+        return userId;
+    } catch (error) {
+        throw new UnauthorizedException;
+    }
+  }
+
+  getIdFromAccessToken(req: Request) {
+    try {
+        const userId = this.jwtService.decode(req.cookies[process.env.JWT_ACCESS_NAME])['id'];
+        return userId;
+    } catch (error) {
+        throw new UnauthorizedException;
+    }
   }
 
   async sendLinkToEmail(key: string, email: string) {

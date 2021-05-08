@@ -1,20 +1,21 @@
 https://wanago.io/2020/05/25/api-nestjs-authenticating-users-bcrypt-passport-jwt-cookies/
 
+Upload files https://www.youtube.com/watch?v=f-URVd2OKYc
 
-TODO:
-[x] refresh password
-https://www.youtube.com/watch?v=-rcRf7yswfM - poprobovatj etot, esli ne polucitsa togda sdelatj prosto s gmail i less secure, cto by hotj kakto rabotalo
+pagination, sorting, filtering:
+https://levelup.gitconnected.com/node-js-filtering-sorting-and-pagination-50ce6c90d0ad
+https://medium.com/swlh/node-js-api-add-crud-operations-with-pagination-filtering-grouping-and-sorting-capabilities-55375ad0b774
+authentication; email verification:
+https://medium.com/swlh/how-to-build-a-node-js-authentication-api-with-email-verification-image-upload-and-password-reset-95e35fd46be1
+mongoose query:
+https://stackoverflow.com/questions/5539955/how-to-paginate-with-mongoose-in-node-js/23640287#23640287
+https://stackoverflow.com/questions/5539955/how-to-paginate-with-mongoose-in-node-js
+https://stackoverflow.com/questions/49842420/how-to-use-mongoose-to-query-keyword-in-2-fields
 
-[x] postavitj guardy kotorye budut proveriatj imeet li user dostup k dannomu endpointu 
-
-[ ] /refresh-token: esli usera netu v bd, to vernutj unauthorized
-
-
-PLAN:
-sorting
-filtering
-pagination
-
-payment 
-
-ignore this file
+[x] - sozdatj mnogo proektov, cto by bylo s cem rabotatj
+[x] - pagination
+[x] - filracija po keywordu (name)
+[x] - filtracija po area (string)
+[x] - filtracija po lokacyi (string)
+[ ] - sorting po date
+[ ] - route this week

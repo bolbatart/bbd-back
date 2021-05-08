@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Request } from 'express';
@@ -7,12 +7,15 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
 import { JwtService } from '@nestjs/jwt';
+import { AuthService } from 'auth/auth.service';
 
 @Injectable()
 export class UsersService {
   constructor(
       @InjectModel(User.name) private userModel: Model<UserDocument>,
-      private jwtService: JwtService
+      @Inject(forwardRef(() => AuthService))
+      private authService: AuthService,
+      private jwtService: JwtService,
     ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -34,9 +37,8 @@ export class UsersService {
   }
 
   async updateMe(req: Request, updateUserDto: UpdateUserDto) {
-    const token = req.cookies[process.env.JWT_ACCESS_NAME];
-    const userId = this.jwtService.decode(token)['id'];
-    
+    const userId = this.authService.getIdFromAccessToken(req);
+
     const dbUser = await this.userModel.findByIdAndUpdate(userId, updateUserDto, { new: true, useFindAndModify: false });
     if (dbUser) {
       const {password, resetToken, ...user} = dbUser.toObject();
@@ -46,8 +48,7 @@ export class UsersService {
   }
 
   async updateAvatar(req: Request, file: Express.Multer.File) {
-    const token = req.cookies[process.env.JWT_ACCESS_NAME];
-    const userId = this.jwtService.decode(token)['id'];
+    const userId = this.authService.getIdFromAccessToken(req);
 
     try {
       await this.userModel.findByIdAndUpdate(userId, { avatar: file.filename }, { useFindAndModify: true });

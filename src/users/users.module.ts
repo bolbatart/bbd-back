@@ -13,10 +13,10 @@ import { AuthModule } from 'auth/auth.module';
         name: User.name, schema: UserSchema
       }
     ]),
-    forwardRef(() => AuthModule)
+    forwardRef(() => AuthModule),
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService], 
   exports: [UsersService]
 }) 
 export class UsersModule {}

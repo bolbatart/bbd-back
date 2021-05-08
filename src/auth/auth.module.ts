@@ -8,14 +8,15 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 
 import { UsersModule } from 'users/users.module';
 
+
 @Module({
   imports: [
     MongooseModule.forFeature([{name: User.name, schema: UserSchema}]),
     JwtModule.register({ secret: process.env.JWT_SECRET }),
-    forwardRef(() => UsersModule)
+    forwardRef(() => UsersModule),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
-  exports: [JwtModule]
+  exports: [AuthService, JwtModule]
 })
 export class AuthModule {}
