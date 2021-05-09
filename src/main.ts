@@ -7,6 +7,18 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: ['http://localhost:3000', 'http://localhost:4200'],
+    credentials: true,
+    exposedHeaders: [
+      'Accept',
+      'authorization',
+      'Content-Type',
+      'If-None-Match',
+      'SourceType',
+    ],
+  })
+
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
   
@@ -19,6 +31,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT);
 }
 bootstrap();

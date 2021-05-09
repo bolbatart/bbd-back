@@ -13,17 +13,17 @@ export class RegistreDto {
 
     @ApiProperty()
     @IsString()
-    @MinLength(4)
-    @MaxLength(20)
-    @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/)
-    @Match('passwordConfirm')
+    @MinLength(4, { message: 'The passowrd is to weak.' })
+    // @MaxLength(20)
+    @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: 'The passowrd is to weak.' })
+    @Match('passwordConfirm', { message: 'Your passwords did not match. Please retype them.' })
     readonly password: string;
 
     @ApiProperty()
     @IsString()
-    @MinLength(4)
-    @MaxLength(20)
-    @Match('password')
+    @MinLength(4, { message: 'The passowrd is to weak.' })
+    // @MaxLength(20)
+    @Match('password', { message: 'Your passwords did not match. Please retype them.' })
     readonly passwordConfirm: string;
 
     @ApiProperty()

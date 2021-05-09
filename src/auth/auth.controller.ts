@@ -59,12 +59,5 @@ export class AuthController {
   ) {
     return this.authService.resetPassword(resetPasswordDto, key);
   }
-
-  // secret endpoint
-  @UseGuards(JwtAuthGuard)
-  @Get('secret')
-  secretRoute() {
-    return { message: 'proshel cerez guard' }
-  }
 }
 

@@ -31,7 +31,7 @@ export class AuthService {
   // REGISTER
   async register(res: Response, registerDto: RegistreDto) {
     const exist = await this.userModel.findOne({ email: registerDto.email });
-    if (exist) throw new BadRequestException;
+    if (exist) throw new BadRequestException({ message: 'The user with this email is already exists!'});
     
     try {
       const dbUser = new this.userModel(registerDto);
