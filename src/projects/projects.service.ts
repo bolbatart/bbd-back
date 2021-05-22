@@ -20,8 +20,10 @@ export class ProjectsService {
     const userId = this.authService.getIdFromAccessToken(req);
 
     try {
+      const today = new Date();
       const dbProject = new this.projectModel(createProjectDto);
       dbProject.author = userId;
+      dbProject.timestamp = today;
       await dbProject.save();
 
       const project = dbProject.toObject();
@@ -34,18 +36,26 @@ export class ProjectsService {
 
   async get(skip: number, limit: number, area?: string, name?: string, location?: string) {
     try {
-        const projects = this.projectModel.find({
+        const dbFilterQuery = {
           name: name ? { $regex: name } : { $type: 2 },
-          area: area ? area : { $type: 2 },
-          location: location ? location : { $type: 2 }
-        }).limit(Number(limit)).skip(Number(skip))
+          area: area ? { $regex: area } : { $type: 2 },
+          location: location ? { $regex: location } : { $type: 2 }
+        };
+        const projects = (await this.projectModel.find(dbFilterQuery).limit(Number(limit)).skip(Number(skip))).map(pr => ({
+          id: pr._id,
+          name: pr.name,
+          area: pr.area,
+          shortDescription: pr.shortDescription,
+          availablePositions: pr.availablePositions,
+          location: pr.location,
+        })) 
 
         return {
-            results: await projects,
+            results: projects,
             meta: {
                 skip,
                 limit,
-                total: await this.projectModel.countDocuments()
+                total: await this.projectModel.countDocuments(dbFilterQuery)
             }
         } 
     } catch (error) {
@@ -68,6 +78,17 @@ export class ProjectsService {
       }
 
       return { project, author };
+    } catch (error) {
+      throw InternalServerErrorException;
+    }
+  }
+
+  async getLastWeek() {
+    try {
+      const thisWeekProjects = await this.projectModel.find({ timestamp: {
+        $gte: new Date((new Date()).getTime() - 7 * 60 * 60 * 24 * 100)
+      } })
+      return thisWeekProjects;
     } catch (error) {
       throw InternalServerErrorException;
     }

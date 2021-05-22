@@ -7,8 +7,8 @@ export class RegistreDto {
     @ApiProperty()
     @IsString()
     @IsEmail()
-    @MinLength(4)
-    @MaxLength(20)
+    @MinLength(4, { message: 'Email must be valid' })
+    // @MaxLength(20)
     readonly email: string;
 
     @ApiProperty()
@@ -28,9 +28,13 @@ export class RegistreDto {
 
     @ApiProperty()
     @IsNotEmpty()
+    @MinLength(2, { message: 'First name can consist of no less than 2 and no more than 200 characters long' })
+    @MaxLength(200, { message: 'First name can consist of no less than 2 and no more than 200 characters long' })
     readonly firstName: string;
 
     @ApiProperty()
     @IsNotEmpty()
+    @MinLength(2, { message: 'Last name can consist of no less than 2 and no more than 200 characters long' })
+    @MaxLength(200, { message: 'Last name can consist of no less than 2 and no more than 200 characters long' })
     readonly lastName: string;
 }

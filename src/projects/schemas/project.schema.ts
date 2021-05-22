@@ -34,6 +34,9 @@ export class Project {
 
   @Prop()
   comments?: string;
+
+  @Prop()
+  timestamp: Date;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

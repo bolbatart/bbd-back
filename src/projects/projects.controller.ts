@@ -20,13 +20,15 @@ export class ProjectsController {
     return await this.projectsService.create(req, createProjectDto);
   }
 
-  @Get(':skip/:limit')
+  @Get('')
+  @ApiQuery({ name: 'limit', required: true, type: Number })
+  @ApiQuery({ name: 'skip', required: true, type: Number })
   @ApiQuery({ name: 'name', required: false, type: String })
   @ApiQuery({ name: 'area', required: false, type: String })
   @ApiQuery({ name: 'location', required: false, type: String })
   async get(
-    @Param('skip') skip: number,
-    @Param('limit') limit: number,
+    @Query('limit') limit: number,
+    @Query('skip') skip: number,
     @Query('name') name: string,
     @Query('area') area: string,
     @Query('location') location: string,
@@ -34,7 +36,13 @@ export class ProjectsController {
     return await this.projectsService.get(skip, limit, area, name, location);
   }
 
-  @Get()
+  @Get('lastweek')
+  async getLastWeek (
+  ) {
+    return await this.projectsService.getLastWeek();
+  }
+
+  @Get(':id')
   async getById (
     @Param('id') id: string
   ) {
