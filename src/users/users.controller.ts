@@ -21,6 +21,14 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  getMe(
+    @Req() req: Request
+  ) {
+    return this.usersService.getMe(req);
+  }
+
   @Get()
   findAll() {
     return this.usersService.findAll();

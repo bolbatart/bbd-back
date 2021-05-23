@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Request } from 'express';
@@ -23,13 +23,35 @@ export class UsersService {
     return createdUser.save();
   }
 
+  async getMe(req: Request) {
+    try {
+      const userId = this.authService.getIdFromAccessToken(req);
+      const dbUser = await this.userModel.findById(userId);
+      
+      if (dbUser) {
+        const {password, resetToken, ...user} = dbUser.toObject();
+        return user;
+      } else throw new InternalServerErrorException;
+    } catch (error) {
+      throw new InternalServerErrorException;
+    }
+  }
+
   async findAll(): Promise<User[]> {
     return this.userModel.find().exec();
   }
 
-  async findById(id: string): Promise<User> {
-    const user = await this.userModel.findById(id);
-    return user;
+  async findById(id: string) {
+    const dbUser = await this.userModel.findById(id);
+    if (!dbUser) throw new BadRequestException; 
+    
+    try {
+      const { password, resetToken, ...user } = dbUser.toObject();
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException;
+      
+    }
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
